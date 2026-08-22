@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-luxury-black: #0a0a0a;
+  --color-luxury-charcoal: #1c1c1c;
+  --color-luxury-beige: #efebe1;
+  --color-luxury-gold: #dfd2c0;
+  --color-luxury-cream: #fbfbfb;
+  
+  --font-serif: var(--font-cormorant);
+  --font-sans: var(--font-inter);
+}
+
+:root {
+  --background: var(--color-luxury-black);
+  --foreground: var(--color-luxury-cream);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
