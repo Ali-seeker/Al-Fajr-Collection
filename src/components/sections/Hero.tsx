@@ -14,7 +14,9 @@ export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const platformRef = useRef<HTMLDivElement>(null);
+  const platformRotationRef = useRef<HTMLDivElement>(null);
   const mannequinRef = useRef<HTMLDivElement>(null);
+  const mannequinRotationRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -75,6 +77,14 @@ export default function Hero() {
           end: "bottom top",
           scrub: true,
         },
+      });
+
+      /* Infinite 3D rotation for mannequin */
+      gsap.to(mannequinRotationRef.current, {
+        rotationY: 360,
+        duration: 18,
+        repeat: -1,
+        ease: "none",
       });
     }, section);
 
@@ -160,13 +170,15 @@ export default function Hero() {
           className="absolute left-1/2 top-[74%] h-[90px] w-[72%] -translate-x-1/2 -translate-y-1/2"
           style={{ perspective: "1000px" }}
         >
-          <div
-            className="absolute inset-0 rounded-[50%] border border-[#d6b477]/40 bg-[radial-gradient(ellipse_at_center,#65513a_0%,#33281c_55%,#17130e_100%)] shadow-[0_25px_80px_rgba(0,0,0,.65)]"
-          />
-
-          <div className="absolute left-1/2 top-1/2 h-[15px] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[#d9b46f]/60 blur-[3px]" />
-
-          <div className="absolute -bottom-1 left-1/2 h-5 w-[68%] -translate-x-1/2 rounded-[50%] bg-[#d8b26c]/20 blur-[8px]" />
+          <div ref={platformRotationRef} className="absolute inset-0 h-full w-full">
+            <div
+              className="absolute inset-0 rounded-[50%] border border-[#d6b477]/40 bg-[radial-gradient(ellipse_at_center,#65513a_0%,#33281c_55%,#17130e_100%)] shadow-[0_25px_80px_rgba(0,0,0,.65)]"
+            />
+  
+            <div className="absolute left-1/2 top-1/2 h-[15px] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[#d9b46f]/60 blur-[3px]" />
+  
+            <div className="absolute -bottom-1 left-1/2 h-5 w-[68%] -translate-x-1/2 rounded-[50%] bg-[#d8b26c]/20 blur-[8px]" />
+          </div>
         </div>
 
         {/* Mannequin / Suit */}
@@ -178,36 +190,38 @@ export default function Hero() {
             perspective: "1200px",
           }}
         >
-          {/* Dummy / Mannequin Image */}
-          <div className="absolute left-1/2 top-0 h-[100%] w-[100%] -translate-x-1/2">
-            <Image 
-              src="/images/hero/hero-suit.png"
-              alt="Luxury Suit"
-              fill
-              className="object-contain object-bottom drop-shadow-2xl"
-              style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)' }}
-              priority
-              unoptimized
-            />
-          </div>
-          
-          {/* Future back image support */}
-          {siteConfig.hero.backImage && (
-            <div
-              className="absolute left-1/2 top-[3%] h-[96%] w-[90%] -translate-x-1/2"
-              style={{
-                transform: "rotateY(180deg)",
-                backfaceVisibility: "hidden",
-              }}
-            >
-              <Image
-                src={siteConfig.hero.backImage}
-                alt="Featured wholesale suit back"
+          <div ref={mannequinRotationRef} className="absolute inset-0 h-full w-full" style={{ transformStyle: "preserve-3d" }}>
+            {/* Dummy / Mannequin Image */}
+            <div className="absolute left-1/2 top-0 h-[100%] w-[100%] -translate-x-1/2">
+              <Image 
+                src="/images/hero/hero-suit.png"
+                alt="Luxury Suit"
                 fill
-                className="object-contain"
+                className="object-contain object-bottom drop-shadow-2xl"
+                style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)' }}
+                priority
+                unoptimized
               />
             </div>
-          )}
+            
+            {/* Future back image support */}
+            {siteConfig.hero.backImage && (
+              <div
+                className="absolute left-1/2 top-[3%] h-[96%] w-[90%] -translate-x-1/2"
+                style={{
+                  transform: "rotateY(180deg)",
+                  backfaceVisibility: "hidden",
+                }}
+              >
+                <Image
+                  src={siteConfig.hero.backImage}
+                  alt="Featured wholesale suit back"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
