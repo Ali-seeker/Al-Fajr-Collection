@@ -1,47 +1,43 @@
 "use client";
+
 import { useRef } from "react";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useInView } from "framer-motion";
+import { siteConfig } from "@/config/data";
 
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
-
-export function Stats() {
-  const containerRef = useRef(null);
-
-  useGSAP(() => {
-    gsap.from(".stat-item", {
-      scrollTrigger: {
-        trigger: containerRef.current,
-        start: "top 85%",
-      },
-      y: 40,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.2,
-      ease: "power3.out"
-    });
-  }, { scope: containerRef });
+export default function Stats() {
+  const ref = useRef<HTMLDivElement>(null);
+  const visible = useInView(ref, {
+    once: true,
+    amount: 0.3,
+  });
 
   return (
-    <section ref={containerRef} className="py-20 bg-luxury-cream text-luxury-black border-b border-black/5">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-luxury-black/10">
-          <div className="stat-item flex flex-col pt-8 md:pt-0">
-            <span className="font-serif text-5xl md:text-6xl text-luxury-green mb-2">1000+</span>
-            <span className="font-sans uppercase tracking-widest text-sm font-semibold">Happy Retailers</span>
+    <section className="bg-[#0e1712] px-6 py-10 lg:px-12">
+      <div
+        ref={ref}
+        className="mx-auto grid max-w-[1400px] grid-cols-1 divide-y divide-white/10 md:grid-cols-3 md:divide-x md:divide-y-0"
+      >
+        {siteConfig.stats.map((stat, index) => (
+          <div
+            key={stat.label}
+            className="px-6 py-5 text-center transition-all duration-700"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible
+                ? "translateY(0)"
+                : "translateY(20px)",
+              transitionDelay: `${index * 100}ms`,
+            }}
+          >
+            <div className="font-display text-3xl text-[#d5b477]">
+              {stat.value}
+            </div>
+
+            <div className="mt-1 text-[9px] uppercase tracking-[0.2em] text-white/40">
+              {stat.label}
+            </div>
           </div>
-          <div className="stat-item flex flex-col pt-8 md:pt-0">
-            <span className="font-serif text-5xl md:text-6xl text-luxury-green mb-2">500+</span>
-            <span className="font-sans uppercase tracking-widest text-sm font-semibold">Unique Designs</span>
-          </div>
-          <div className="stat-item flex flex-col pt-8 md:pt-0">
-            <span className="font-serif text-5xl md:text-6xl text-luxury-green mb-2">24/7</span>
-            <span className="font-sans uppercase tracking-widest text-sm font-semibold">Wholesale Support</span>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );

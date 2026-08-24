@@ -5,17 +5,20 @@ import "./globals.css";
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
   title: "Suit Wholesale | Premium Ladies Fashion Wholesale",
-  description: "Premium ladies suits at wholesale prices for retailers, boutiques and fashion businesses.",
+  description:
+    "Premium ladies suits at wholesale prices for retailers, boutiques and fashion businesses.",
 };
 
 export default function RootLayout({
@@ -24,11 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col font-sans bg-luxury-cream text-luxury-black">
+    <html lang="en">
+      <body
+        className={`${cormorant.variable} ${inter.variable} antialiased`}
+      >
         {children}
       </body>
     </html>

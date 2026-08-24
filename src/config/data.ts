@@ -1,42 +1,134 @@
-export const mockData = {
+export const siteConfig = {
+  name: "SUIT WHOLESALE",
+  tagline: "B2B FASHION",
+
+  navigation: [
+    { label: "Home", href: "/" },
+    { label: "Collections", href: "/collections" },
+    { label: "About Us", href: "/about" },
+    { label: "Wholesale", href: "/wholesale" },
+    { label: "Lookbook", href: "/lookbook" },
+    { label: "Contact", href: "/contact" },
+  ],
+
   hero: {
-    image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?q=80&w=2000&auto=format&fit=crop",
-    headline: "Wholesale Fashion,\nMade to Move.",
-    subtext: "Premium quality ladies suits at wholesale prices.\nTrusted by businesses. Loved by thousands.",
+    eyebrow: "WHOLESALE FASHION",
+    title: "Wholesale Fashion,",
+    accentTitle: "Made to Move.",
+    description:
+      "Premium quality ladies suits at wholesale prices. Trusted by businesses. Loved by thousands.",
+
+    primaryCta: {
+      label: "Explore Collections",
+      href: "/collections",
+    },
+
+    secondaryCta: {
+      label: "Become a Partner",
+      href: "/wholesale",
+    },
+
+    // Replace this later with the image selected from your admin dashboard.
+    image: "/images/hero/hero-suit.png",
+
+    // Optional future back image.
+    // If null, the front image is mirrored on the back.
+    backImage: null as string | null,
   },
+
+  stats: [
+    {
+      value: "1000+",
+      label: "Happy Retailers",
+    },
+    {
+      value: "500+",
+      label: "Unique Designs",
+    },
+    {
+      value: "24/7",
+      label: "Wholesale Support",
+    },
+  ],
+
   collections: [
     {
-      id: "premium-lawn",
+      id: 1,
       title: "Premium Lawn",
-      image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=800&auto=format&fit=crop",
-      count: 45,
+      designs: "25+ Designs",
+      image: "/images/collections/lawn.jpg",
     },
     {
-      id: "embroidered-suits",
+      id: 2,
       title: "Embroidered Suits",
-      image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?q=80&w=800&auto=format&fit=crop",
-      count: 32,
+      designs: "30+ Designs",
+      image: "/images/collections/embroidered.jpg",
     },
     {
-      id: "luxury-collection",
+      id: 3,
       title: "Luxury Collection",
-      image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=800&auto=format&fit=crop",
-      count: 28,
+      designs: "20+ Designs",
+      image: "/images/collections/luxury.jpg",
     },
     {
-      id: "digital-prints",
+      id: 4,
       title: "Digital Prints",
-      image: "https://images.unsplash.com/photo-1539008835657-9e8e9680c956?q=80&w=800&auto=format&fit=crop",
-      count: 50,
-    }
+      designs: "40+ Designs",
+      image: "/images/collections/digital.jpg",
+    },
   ],
+
+  benefits: [
+    {
+      number: "01",
+      title: "Premium Quality",
+      description:
+        "Finest fabrics and stitching that your customers will love.",
+      icon: "diamond",
+    },
+    {
+      number: "02",
+      title: "Wholesale Pricing",
+      description:
+        "Best wholesale prices to help grow your business.",
+      icon: "price",
+    },
+    {
+      number: "03",
+      title: "Bulk Orders",
+      description:
+        "Flexible ordering designed for retailers and resellers.",
+      icon: "box",
+    },
+    {
+      number: "04",
+      title: "Reliable Supply",
+      description:
+        "Consistent availability and dependable delivery.",
+      icon: "truck",
+    },
+  ],
+
   lookbook: [
-    { id: 1, image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=800&auto=format&fit=crop" },
-    { id: 2, image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=800&auto=format&fit=crop" },
-    { id: 3, image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop" },
-    { id: 4, image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop" },
+    {
+      id: 1,
+      image: "/images/lookbook/look-01.jpg",
+      alt: "Premium ladies fashion",
+    },
+    {
+      id: 2,
+      image: "/images/lookbook/look-02.jpg",
+      alt: "Elegant embroidered suit",
+    },
+    {
+      id: 3,
+      image: "/images/lookbook/look-03.jpg",
+      alt: "Luxury ladies suit",
+    },
+    {
+      id: 4,
+      image: "/images/lookbook/look-04.jpg",
+      alt: "Wholesale fashion collection",
+    },
   ],
-  cta: {
-    image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1600&auto=format&fit=crop"
-  }
 };

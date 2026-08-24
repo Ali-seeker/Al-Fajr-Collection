@@ -1,172 +1,234 @@
 "use client";
 
-import { useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import { ArrowRight, User, Gem, Clock, Mouse } from "lucide-react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ArrowRight, ChevronDown } from "lucide-react";
+import { siteConfig } from "@/config/data";
 
-export function Hero() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const podiumRef = useRef<HTMLDivElement>(null);
+gsap.registerPlugin(ScrollTrigger);
 
-  useGSAP(() => {
-    if (!textRef.current || !podiumRef.current) return;
-    
-    gsap.from(textRef.current.children, {
-      y: 40,
-      opacity: 0,
-      duration: 1.2,
-      stagger: 0.2,
-      ease: "power4.out",
-      delay: 0.2,
-    });
+export default function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const backgroundRef = useRef<HTMLDivElement>(null);
+  const platformRef = useRef<HTMLDivElement>(null);
+  const mannequinRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-    // Animate the podium rotating horizontally (around Z axis)
-    gsap.to(podiumRef.current, {
-      rotationZ: 360,
-      duration: 20,
-      repeat: -1,
-      ease: "none",
-    });
-  }, { scope: containerRef });
+  useLayoutEffect(() => {
+    const section = sectionRef.current;
+
+    if (!section) return;
+
+    const ctx = gsap.context(() => {
+      /* Initial entrance */
+      gsap.fromTo(
+        contentRef.current,
+        {
+          opacity: 0,
+          x: -40,
+        },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1.4,
+          ease: "power3.out",
+          delay: 0.2,
+        }
+      );
+
+      /* Hero depth movement */
+      gsap.to(backgroundRef.current, {
+        yPercent: 12,
+        scale: 1.08,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      gsap.to(platformRef.current, {
+        yPercent: -12,
+        scale: 0.94,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+
+      gsap.to(mannequinRef.current, {
+        yPercent: -18,
+        rotateZ: -2,
+        scale: 1.05,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section ref={containerRef} className="relative h-screen min-h-[800px] w-full overflow-hidden bg-luxury-black text-luxury-cream">
-      
-      {/* 3D Rotating Wooden Podium & Dummy on the Right */}
-      <div className="absolute right-0 md:right-[5%] top-1/2 -translate-y-1/2 w-full md:w-[600px] h-[800px] flex flex-col items-center justify-center z-0 pointer-events-none">
-        
-        {/* Dummy / Mannequin Video (Rotating 360) */}
-        {/* NOTE FOR USER: A static 2D image cannot show front and back. 
-            To show a 360-degree view of your suit, you need a .mp4 video of it spinning.
-            Upload your video to the 'public' folder and replace the 'src' below with '/your-video.mp4'. */}
-        <div className="relative w-[250px] md:w-[350px] h-[450px] md:h-[600px] z-10 -mb-16 md:-mb-24 drop-shadow-2xl flex items-center justify-center overflow-hidden">
-          {/* Temporary placeholder to simulate a 360 rotating dummy */}
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-            className="w-full h-full object-cover object-center"
-            style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 80%, transparent 100%)' }}
-          >
-            {/* REPLACE THIS SRC WITH YOUR ACTUAL ROTATING SUIT VIDEO (.MP4) */}
-            <source src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-spinning-in-a-black-dress-44337-large.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
+    <section
+      ref={sectionRef}
+      className="grain relative min-h-[100svh] overflow-hidden bg-[#090b09]"
+    >
+      {/* Background */}
+      <div
+        ref={backgroundRef}
+        className="absolute inset-[-8%] bg-[radial-gradient(circle_at_70%_50%,rgba(62,74,58,.35),transparent_36%),radial-gradient(circle_at_20%_20%,rgba(137,103,58,.15),transparent_35%)]"
+      />
 
-        {/* Horizontal Wooden Podium */}
-        <div 
-          className="relative w-[300px] md:w-[450px] h-[300px] md:h-[450px] perspective-[1000px] z-0"
-        >
-          {/* Parent wrapper keeps the 3D tilt (horizontal floor) */}
-          <div className="w-full h-full transform-style-3d" style={{ transform: "rotateX(75deg)" }}>
-            
-            {/* Child actually spins 360 degrees (controlled by GSAP) */}
-            <div 
-              ref={podiumRef}
-              className="w-full h-full rounded-full border-[8px] border-[#4A3018]"
-              style={{ 
-                background: "radial-gradient(circle, #8B5A2B 0%, #5C3A21 80%, #3E2723 100%)",
-                boxShadow: "0 30px 60px rgba(0,0,0,0.9), inset 0 0 50px rgba(0,0,0,0.8)"
-              }}
+      {/* Architectural glow */}
+      <div className="absolute right-[8%] top-[16%] h-[450px] w-[450px] rounded-full bg-[#b99052]/10 blur-[130px]" />
+
+      {/* Content */}
+      <div
+        ref={contentRef}
+        className="relative z-20 mx-auto flex min-h-[100svh] max-w-[1500px] items-center px-6 pb-20 pt-32 lg:px-12"
+      >
+        <div className="w-full lg:w-[53%]">
+          <p className="mb-6 text-[10px] font-semibold uppercase tracking-[0.38em] text-[#c9a66b]">
+            {siteConfig.hero.eyebrow}
+          </p>
+
+          <h1 className="max-w-[700px] font-display text-[clamp(4rem,7.2vw,7.6rem)] font-medium leading-[0.78] tracking-[-0.045em] text-[#f3ede3]">
+            {siteConfig.hero.title}
+            <br />
+
+            <em className="text-[#c9a66b]">
+              {siteConfig.hero.accentTitle}
+            </em>
+          </h1>
+
+          <p className="mt-9 max-w-[450px] text-sm leading-7 text-white/55">
+            {siteConfig.hero.description}
+          </p>
+
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Link href={siteConfig.hero.primaryCta.href} className="luxury-button">
+              {siteConfig.hero.primaryCta.label}
+              <ArrowRight size={15} />
+            </Link>
+
+            <Link
+              href={siteConfig.hero.secondaryCta.href}
+              className="luxury-button luxury-button-outline"
             >
-              {/* Wood Grain / Rotating Rings */}
-              <div className="absolute inset-4 rounded-full border border-[#3E2723]/40"></div>
-              <div className="absolute inset-8 rounded-full border border-[#3E2723]/30"></div>
-              <div className="absolute inset-16 rounded-full border border-[#3E2723]/20"></div>
-              
-              {/* Center mark to show rotation */}
-              <div className="absolute top-0 left-1/2 w-2 h-8 bg-[#3E2723]/60 -translate-x-1/2"></div>
-              <div className="absolute bottom-0 left-1/2 w-2 h-8 bg-[#3E2723]/60 -translate-x-1/2"></div>
-            </div>
-          </div>
-          
-          {/* Podium Thickness (Base) */}
-          <div 
-            className="absolute bottom-[40px] md:bottom-[60px] left-0 w-full h-[40px] md:h-[60px] bg-[#3E2723] rounded-b-[50%] z-[-1]"
-            style={{ boxShadow: "0 20px 40px rgba(0,0,0,0.9)" }}
-          ></div>
-        </div>
-
-      </div>
-
-      {/* Main Content Container */}
-      <div className="container mx-auto px-6 md:px-12 relative z-10 h-full flex flex-col justify-between pt-32 pb-12">
-        
-        {/* Center Content (Text Left) */}
-        <div className="flex-1 flex items-center">
-          <div ref={textRef} className="max-w-2xl bg-luxury-black/40 md:bg-transparent backdrop-blur-sm md:backdrop-blur-none p-6 md:p-0 rounded-xl">
-            <span className="text-[0.65rem] tracking-[0.2em] uppercase text-luxury-gold font-semibold mb-4 block">
-              Wholesale Fashion
-            </span>
-            <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl leading-[1.05] mb-6 drop-shadow-lg">
-              Wholesale<br />
-              Fashion,<br />
-              <em className="italic text-luxury-gold font-serif">Made to Move.</em>
-            </h1>
-            <p className="text-sm md:text-base font-sans font-light max-w-sm mb-10 text-white/90 leading-relaxed drop-shadow-md">
-              Premium quality ladies suits in wholesale prices.<br/>
-              Trusted by businesses. Loved by thousands.
-            </p>
-            
-            <Link 
-              href="/collections"
-              className="inline-flex items-center space-x-3 bg-luxury-gold text-luxury-charcoal px-8 py-3.5 text-xs font-semibold tracking-wider hover:bg-white transition-colors rounded-sm"
-            >
-              <span>Explore Collections</span>
-              <ArrowRight size={16} strokeWidth={1.5} />
+              {siteConfig.hero.secondaryCta.label}
             </Link>
           </div>
+
+          {/* Stats */}
+          <div className="mt-14 flex gap-8 border-t border-white/10 pt-7">
+            {siteConfig.stats.map((stat) => (
+              <div key={stat.label}>
+                <div className="font-display text-2xl text-[#e5c994]">
+                  {stat.value}
+                </div>
+
+                <div className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/40">
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Product Stage */}
+      <div className="pointer-events-none absolute right-[-4%] top-[12%] z-10 h-[80%] w-[58%] lg:right-[0%] lg:w-[58%]">
+        {/* Back glow */}
+        <div className="absolute left-1/2 top-1/2 h-[58%] w-[45%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c7a56e]/10 blur-[90px]" />
+
+        {/* Rotating wooden platform */}
+        <div
+          ref={platformRef}
+          className="absolute left-1/2 top-[74%] h-[90px] w-[72%] -translate-x-1/2 -translate-y-1/2"
+          style={{ perspective: "1000px" }}
+        >
+          <div
+            className="absolute inset-0 rounded-[50%] border border-[#d6b477]/40 bg-[radial-gradient(ellipse_at_center,#65513a_0%,#33281c_55%,#17130e_100%)] shadow-[0_25px_80px_rgba(0,0,0,.65)]"
+          />
+
+          <div className="absolute left-1/2 top-1/2 h-[15px] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[#d9b46f]/60 blur-[3px]" />
+
+          <div className="absolute -bottom-1 left-1/2 h-5 w-[68%] -translate-x-1/2 rounded-[50%] bg-[#d8b26c]/20 blur-[8px]" />
         </div>
 
-        {/* Bottom Bar: Stats & Scroll Down */}
-        <div className="flex flex-col md:flex-row items-start md:items-end justify-between w-full gap-8 md:gap-0 bg-luxury-black/30 md:bg-transparent backdrop-blur-md md:backdrop-blur-none p-6 md:p-0 rounded-xl">
-          {/* Stats */}
-          <div className="flex flex-col md:flex-row items-start md:items-center space-y-6 md:space-y-0 md:space-x-12">
-            <div className="flex items-center space-x-3">
-              <User className="text-luxury-gold opacity-80" size={28} strokeWidth={1} />
-              <div className="flex flex-col">
-                <span className="font-serif text-2xl leading-none">1000+</span>
-                <span className="text-[0.65rem] text-white/70">Happy Retailers</span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Gem className="text-luxury-gold opacity-80" size={28} strokeWidth={1} />
-              <div className="flex flex-col">
-                <span className="font-serif text-2xl leading-none">500+</span>
-                <span className="text-[0.65rem] text-white/70">Designs</span>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Clock className="text-luxury-gold opacity-80" size={28} strokeWidth={1} />
-              <div className="flex flex-col">
-                <span className="font-serif text-2xl leading-none">24/7</span>
-                <span className="text-[0.65rem] text-white/70">Wholesale Support</span>
-              </div>
-            </div>
+        {/* Mannequin / Suit */}
+        <div
+          ref={mannequinRef}
+          className="absolute left-1/2 top-[46%] h-[70%] w-[54%] -translate-x-1/2 -translate-y-1/2"
+          style={{
+            transformStyle: "preserve-3d",
+            perspective: "1200px",
+          }}
+        >
+          {/* Dummy / Mannequin Image */}
+          <div className="absolute left-1/2 top-0 h-[100%] w-[100%] -translate-x-1/2">
+            <Image 
+              src="/images/hero/hero-suit.png"
+              alt="Luxury Suit"
+              fill
+              className="object-contain object-bottom drop-shadow-2xl"
+              style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)' }}
+              priority
+              unoptimized
+            />
           </div>
           
-          {/* Scroll Down */}
-          <div className="hidden md:flex flex-col items-center space-y-2 opacity-70">
-            <span className="text-[0.6rem] uppercase tracking-widest">Scroll Down</span>
-            <Mouse size={24} strokeWidth={1} />
-          </div>
+          {/* Future back image support */}
+          {siteConfig.hero.backImage && (
+            <div
+              className="absolute left-1/2 top-[3%] h-[96%] w-[90%] -translate-x-1/2"
+              style={{
+                transform: "rotateY(180deg)",
+                backfaceVisibility: "hidden",
+              }}
+            >
+              <Image
+                src={siteConfig.hero.backImage}
+                alt="Featured wholesale suit back"
+                fill
+                className="object-contain"
+              />
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Vertical Pagination (Right side absolute) */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 z-20 hidden lg:flex flex-col items-center space-y-6">
-        <span className="text-xs font-serif tracking-widest">01</span>
-        <div className="w-[1px] h-16 bg-white/20 relative">
-          <div className="absolute top-0 w-full h-1/3 bg-luxury-gold" />
-        </div>
-        <span className="text-xs font-serif tracking-widest text-white/50">05</span>
+      {/* Hero side indicator */}
+      <div className="absolute right-8 top-1/2 z-30 hidden -translate-y-1/2 flex-col items-center gap-4 lg:flex">
+        <span className="font-display text-sm text-[#d8b578]">01</span>
+
+        <div className="h-28 w-px bg-gradient-to-b from-[#c9a66b] via-white/20 to-transparent" />
+
+        <span className="text-[10px] text-white/40">05</span>
       </div>
+
+      {/* Scroll */}
+      <div className="absolute bottom-7 right-8 z-30 flex items-center gap-3 text-[9px] uppercase tracking-[0.25em] text-white/50">
+        <span>Scroll Down</span>
+
+        <ChevronDown size={14} className="animate-bounce" />
+      </div>
+
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 h-28 bg-gradient-to-t from-[#0d1712] to-transparent" />
     </section>
   );
 }

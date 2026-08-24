@@ -1,23 +1,31 @@
-import { Navbar } from "@/components/navigation/Navbar";
-import { Hero } from "@/components/sections/Hero";
-import { NewCollection } from "@/components/sections/NewCollection";
-import { WhyWholesale } from "@/components/sections/WhyWholesale";
-import { LookbookPreview } from "@/components/sections/LookbookPreview";
-import { CTA } from "@/components/sections/CTA";
-import { Footer } from "@/components/navigation/Footer";
+import Navbar from "@/components/navigation/Navbar";
+import Footer from "@/components/navigation/Footer";
 
-export default function Home() {
+import Hero from "@/components/sections/Hero";
+import Stats from "@/components/sections/Stats";
+import NewCollection from "@/components/sections/NewCollection";
+import WhyWholesale from "@/components/sections/WhyWholesale";
+import LookbookPreview from "@/components/sections/LookbookPreview";
+import CTA from "@/components/sections/CTA";
+
+export default function HomePage() {
   return (
-    <>
+    <main className="overflow-hidden">
       <Navbar />
-      <main className="flex min-h-screen flex-col w-full overflow-hidden">
-        <Hero />
-        <NewCollection />
-        <WhyWholesale />
-        <LookbookPreview />
-        <CTA />
-      </main>
+
+      <Hero />
+
+      <Stats />
+
+      <NewCollection />
+
+      <WhyWholesale />
+
+      <LookbookPreview />
+
+      <CTA />
+
       <Footer />
-    </>
+    </main>
   );
 }
