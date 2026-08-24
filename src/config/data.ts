@@ -56,19 +56,19 @@ export const siteConfig = {
       id: 1,
       title: "Premium Lawn",
       designs: "25+ Designs",
-      image: "/images/collections/lawn.jpg",
+      image: "/images/collections/lawn.webp",
     },
     {
       id: 2,
       title: "Embroidered Suits",
       designs: "30+ Designs",
-      image: "/images/collections/embroidered.jpg",
+      image: "/images/collections/embroidered.webp",
     },
     {
       id: 3,
       title: "Luxury Collection",
       designs: "20+ Designs",
-      image: "/images/collections/luxury.jpg",
+      image: "/images/collections/luxury.webp",
     },
     {
       id: 4,
@@ -112,22 +112,22 @@ export const siteConfig = {
   lookbook: [
     {
       id: 1,
-      image: "/images/lookbook/look-01.jpg",
+      image: "/images/lookbook/look-01.webp",
       alt: "Premium ladies fashion",
     },
     {
       id: 2,
-      image: "/images/lookbook/look-02.jpg",
+      image: "/images/lookbook/look-02.webp",
       alt: "Elegant embroidered suit",
     },
     {
       id: 3,
-      image: "/images/lookbook/look-03.jpg",
+      image: "/images/lookbook/look-03.webp",
       alt: "Luxury ladies suit",
     },
     {
       id: 4,
-      image: "/images/lookbook/look-04.jpg",
+      image: "/images/lookbook/look-04.webp",
       alt: "Wholesale fashion collection",
     },
   ],

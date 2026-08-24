@@ -2,7 +2,6 @@ import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/navigation/Footer";
 
 import Hero from "@/components/sections/Hero";
-import Stats from "@/components/sections/Stats";
 import NewCollection from "@/components/sections/NewCollection";
 import WhyWholesale from "@/components/sections/WhyWholesale";
 import LookbookPreview from "@/components/sections/LookbookPreview";
@@ -14,8 +13,6 @@ export default function HomePage() {
       <Navbar />
 
       <Hero />
-
-      <Stats />
 
       <NewCollection />
 

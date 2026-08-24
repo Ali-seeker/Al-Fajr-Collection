@@ -22,8 +22,8 @@ export default function Navbar() {
   return (
     <header
       className={`fixed left-0 top-0 z-50 w-full transition-all duration-500 ${scrolled
-          ? "border-b border-white/10 bg-[#0a0d0b]/85 backdrop-blur-xl"
-          : "bg-transparent"
+        ? "border-b border-white/10 bg-[#0a0d0b]/85 backdrop-blur-xl"
+        : "bg-transparent"
         }`}
     >
       <div className="mx-auto flex h-[82px] max-w-[1500px] items-center justify-between px-6 lg:px-12">
@@ -35,7 +35,7 @@ export default function Navbar() {
 
           <div>
             <div className="font-display text-[20px] tracking-wide text-[#f4eee3]">
-              SUIT WHOLESALE
+              Al-Fajr Collection
             </div>
 
             <div className="text-[8px] tracking-[0.32em] text-[#c9a66b]">

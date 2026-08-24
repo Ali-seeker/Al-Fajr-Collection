@@ -55,8 +55,7 @@ export default function Hero() {
       });
 
       gsap.to(platformRef.current, {
-        yPercent: -12,
-        scale: 0.94,
+        y: "-10vh",
         ease: "none",
         scrollTrigger: {
           trigger: section,
@@ -67,9 +66,7 @@ export default function Hero() {
       });
 
       gsap.to(mannequinRef.current, {
-        yPercent: -18,
-        rotateZ: -2,
-        scale: 1.05,
+        y: "-10vh",
         ease: "none",
         scrollTrigger: {
           trigger: section,
@@ -108,9 +105,9 @@ export default function Hero() {
       {/* Content */}
       <div
         ref={contentRef}
-        className="relative z-20 mx-auto flex min-h-[100svh] max-w-[1500px] items-center px-6 pb-20 pt-32 lg:px-12"
+        className="relative z-20 mx-auto flex min-h-[100svh] max-w-[1500px] flex-col justify-start pt-[12vh] md:flex-row md:items-center md:pt-32 px-6 pb-20 lg:px-12"
       >
-        <div className="w-full lg:w-[53%]">
+        <div className="w-full md:w-[60%] lg:w-[53%]">
           <p className="mb-6 text-[10px] font-semibold uppercase tracking-[0.38em] text-[#c9a66b]">
             {siteConfig.hero.eyebrow}
           </p>
@@ -160,7 +157,7 @@ export default function Hero() {
       </div>
 
       {/* Product Stage */}
-      <div className="pointer-events-none absolute right-[-4%] top-[12%] z-10 h-[80%] w-[58%] lg:right-[0%] lg:w-[58%]">
+      <div className="pointer-events-none absolute right-0 bottom-[5%] top-auto z-10 h-[45%] w-full md:bottom-auto md:right-[-4%] md:top-[12%] md:h-[80%] md:w-[58%] lg:right-[0%] lg:w-[58%]">
         {/* Back glow */}
         <div className="absolute left-1/2 top-1/2 h-[58%] w-[45%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c7a56e]/10 blur-[90px]" />
 
