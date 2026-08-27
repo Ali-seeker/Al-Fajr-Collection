@@ -44,38 +44,38 @@ export default function NewCollection() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-[#101a15] py-24 lg:h-screen lg:py-0"
+      className="relative overflow-hidden bg-[#101a15] py-16 lg:h-screen lg:py-0"
     >
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_30%,rgba(110,91,58,.16),transparent_30%)]" />
 
       <div className="relative z-10 flex h-full items-center">
         <div className="w-full">
           {/* Header */}
-          <div className="mb-12 px-6 lg:absolute lg:left-12 lg:top-1/2 lg:z-20 lg:mb-0 lg:w-[310px] lg:-translate-y-1/2 lg:px-0">
-            <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.35em] text-[#c9a66b]">
+          <div className="mb-8 px-6 lg:absolute lg:left-12 lg:top-1/2 lg:z-20 lg:mb-0 lg:w-[310px] lg:-translate-y-1/2 lg:px-0">
+            <p className="mb-4 text-[9px] font-semibold uppercase tracking-[0.35em] text-[#c9a66b] lg:text-[10px]">
               NEW COLLECTION
             </p>
 
-            <h2 className="font-display text-5xl leading-[0.9] text-[#f1e9dc] lg:text-6xl">
+            <h2 className="font-display text-4xl leading-[0.9] text-[#f1e9dc] lg:text-5xl xl:text-6xl">
               Summer
               <br />
               <em className="text-[#c9a66b]">'26</em>
             </h2>
 
-            <p className="mt-6 text-sm leading-7 text-white/45">
+            <p className="mt-5 text-sm leading-7 text-white/45 lg:mt-6">
               Discover our latest wholesale collection crafted for elegance
               and made for business.
             </p>
 
             <Link
               href="/collections"
-              className="luxury-button luxury-button-outline mt-7"
+              className="luxury-button luxury-button-outline mt-6 lg:mt-7"
             >
               View Collection
               <ArrowRight size={14} />
             </Link>
 
-            <div className="mt-12 flex items-center gap-5">
+            <div className="mt-10 flex items-center gap-5 lg:mt-12">
               <button className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/70">
                 <ChevronLeft size={15} />
               </button>
@@ -93,13 +93,13 @@ export default function NewCollection() {
           {/* Cards */}
           <div
             ref={trackRef}
-            className="flex gap-5 pl-6 lg:ml-[390px] lg:pl-0"
+            className="flex gap-4 pl-6 lg:ml-[390px] lg:gap-5 lg:pl-0"
           >
             {siteConfig.collections.map((collection) => (
               <Link
                 key={collection.id}
-                href={`/collections/${collection.id}`}
-                className="group relative block h-[440px] w-[280px] flex-none overflow-hidden rounded-[8px] border border-white/10 bg-[#18221d] lg:h-[540px] lg:w-[350px]"
+                href={`/collections/${collection.slug}`}
+                className="group relative block h-[380px] w-[260px] flex-none overflow-hidden rounded-[8px] border border-white/10 bg-[#18221d] lg:h-[540px] lg:w-[350px]"
               >
                 <Image
                   src={collection.image}

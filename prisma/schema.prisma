@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +8,494 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  ADMIN
+  MANAGER
+  RETAILER
+  WHOLESALE_PARTNER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  PARTIAL
+  REFUNDED
+  FAILED
+}
+
+enum PartnerApplicationStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  NEEDS_MORE_INFO
+}
+
+enum ContactInquiryType {
+  WHOLESALE
+  GENERAL
+  SUPPORT
+  PARTNERSHIP
+  OTHER
+}
+
+enum ContactInquiryStatus {
+  NEW
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+// ============================================
+// CORE MODELS
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String
+  name          String
+  phone         String?
+  whatsapp      String?
+  role          UserRole  @default(RETAILER)
+  businessName  String?
+  businessType  String?
+  city          String?
+  address       String?
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  orders           Order[]
+  partnerApplication PartnerApplication?
+  addresses        Address[]
+  cartItems        CartItem[]
+  wishlistItems    WishlistItem[]
+  sessions         Session[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([token])
+  @@index([userId])
+}
+
+// ============================================
+// CATALOG MODELS
+// ============================================
+
+model Collection {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  image       String
+  designsCount Int     @default(0)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  products Product[]
+
+  @@index([slug])
+  @@index([isActive, sortOrder])
+}
+
+model Product {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  name            String
+  description     String?
+  price           Decimal  @db.Decimal(10, 2)
+  compareAtPrice  Decimal? @db.Decimal(10, 2)
+  fabric          String?
+  moq             String   @default("10 pieces")
+  colors          String[] @default([])
+  images          String[] @default([])
+  primaryImage    String
+  isActive        Boolean  @default(true)
+  isFeatured      Boolean  @default(false)
+  sortOrder       Int      @default(0)
+  collectionId    String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  collection    Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  variants      ProductVariant[]
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
+
+  @@index([slug])
+  @@index([collectionId])
+  @@index([isActive, isFeatured])
+  @@index([sortOrder])
+}
+
+model ProductVariant {
+  id        String   @id @default(cuid())
+  productId String
+  color     String
+  size      String?
+  sku       String   @unique
+  stock     Int      @default(0)
+  price     Decimal? @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([sku])
+}
+
+// ============================================
+// ORDER MODELS
+// ============================================
+
+model Order {
+  id              String       @id @default(cuid())
+  orderNumber     String       @unique
+  userId          String
+  status          OrderStatus  @default(PENDING)
+  paymentStatus   PaymentStatus @default(PENDING)
+  
+  // Customer info (snapshot at order time)
+  customerName    String
+  customerBusiness String
+  customerPhone   String
+  customerWhatsapp String
+  customerEmail   String
+  customerCity    String
+  customerAddress String
+  
+  // Financial
+  subtotal        Decimal      @db.Decimal(10, 2)
+  shippingCost    Decimal      @default(0) @db.Decimal(10, 2)
+  discount        Decimal      @default(0) @db.Decimal(10, 2)
+  tax             Decimal      @default(0) @db.Decimal(10, 2)
+  total           Decimal      @db.Decimal(10, 2)
+  
+  // Notes
+  notes           String?
+  adminNotes      String?
+  
+  // Tracking
+  trackingNumber  String?
+  shippedAt       DateTime?
+  deliveredAt     DateTime?
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  // Relations
+  user       User         @relation(fields: [userId], references: [id], onDelete: Restrict)
+  items      OrderItem[]
+  payments   Payment[]
+  statusLogs OrderStatusLog[]
+
+  @@index([orderNumber])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  color     String?
+  size      String?
+  createdAt DateTime @default(now())
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  orderId       String
+  amount        Decimal  @db.Decimal(10, 2)
+  method        String   // bank_transfer, jazzcash, easypaisa, cash_on_delivery
+  reference     String?  // transaction reference
+  status        PaymentStatus @default(PENDING)
+  paidAt        DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([reference])
+}
+
+model OrderStatusLog {
+  id        String      @id @default(cuid())
+  orderId   String
+  status    OrderStatus
+  note      String?
+  createdAt DateTime    @default(now())
+  createdBy String?     // admin user id
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+}
+
+// ============================================
+// PARTNER / WHOLESALE MODELS
+// ============================================
+
+model PartnerApplication {
+  id                 String                  @id @default(cuid())
+  userId             String?                 @unique
+  fullName           String
+  businessName       String
+  whatsapp           String
+  email              String
+  city               String
+  businessType       String
+  estimatedVolume    String
+  message            String?
+  status             PartnerApplicationStatus @default(PENDING)
+  reviewedAt         DateTime?
+  reviewedBy         String?
+  reviewNotes        String?
+  createdAt          DateTime                @default(now())
+  updatedAt          DateTime                @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ============================================
+// CONTACT / INQUIRY MODELS
+// ============================================
+
+model ContactInquiry {
+  id        String               @id @default(cuid())
+  type      ContactInquiryType   @default(GENERAL)
+  name      String
+  business  String?
+  email     String
+  phone     String?
+  city      String?
+  message   String
+  status    ContactInquiryStatus @default(NEW)
+  assignedTo String?
+  respondedAt DateTime?
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// ============================================
+// MARKETING / CONTENT MODELS
+// ============================================
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  isActive  Boolean  @default(true)
+  subscribedAt DateTime @default(now())
+  unsubscribedAt DateTime?
+  source    String?  // footer, checkout, partner_form, etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([isActive])
+}
+
+model LookbookItem {
+  id        String   @id @default(cuid())
+  title     String
+  image     String
+  alt       String?
+  collectionId String?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model WholesaleFAQ {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  category  String?
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model WholesaleBenefit {
+  id        String   @id @default(cuid())
+  title     String
+  description String
+  icon      String?  // lucide icon name
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+model WholesaleProcessStep {
+  id          String   @id @default(cuid())
+  step        String   // "01", "02", etc.
+  title       String
+  description String
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+
+// ============================================
+// CART / WISHLIST MODELS
+// ============================================
+
+model CartItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  quantity  Int      @default(1)
+  color     String?
+  size      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId, color, size])
+  @@index([userId])
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+}
+
+// ============================================
+// ADDRESS MODEL
+// ============================================
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   @default("shipping") // shipping, billing
+  name      String   // Full name
+  phone     String
+  address   String
+  city      String
+  state     String?
+  country   String   @default("Pakistan")
+  isDefault Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ============================================
+// SETTINGS / CONFIG MODELS
+// ============================================
+
+model SiteSettings {
+  id              String   @id @default("main")
+  siteName        String   @default("Al-Fajr Collection")
+  siteTagline     String   @default("B2B FASHION")
+  contactEmail    String   @default("wholesale@alfajrcollection.com")
+  contactPhone    String   @default("+92 300 000 0000")
+  contactWhatsApp String   @default("+92 300 000 0000")
+  contactAddress  String   @default("Lahore, Punjab, Pakistan")
+  businessHours   String   @default("Mon-Sat: 9:00 AM - 9:00 PM")
+  updatedAt       DateTime @updatedAt
+}
+
+model HeroSettings {
+  id              String   @id @default("main")
+  eyebrow         String   @default("WHOLESALE FASHION")
+  title           String   @default("Wholesale Fashion,")
+  accentTitle     String   @default("Made to Move.")
+  description     String   @default("Premium quality ladies suits at wholesale prices. Trusted by businesses. Loved by thousands.")
+  primaryCtaLabel String   @default("Explore Collections")
+  primaryCtaHref  String   @default("/collections")
+  secondaryCtaLabel String @default("Become a Partner")
+  secondaryCtaHref String  @default("/wholesale")
+  heroImage       String   @default("/images/hero/hero-suit.png")
+  backImage       String?
+  updatedAt       DateTime @updatedAt
+}
+
+model StatsSettings {
+  id        String   @id @default("main")
+  stats     Json     // Array of {value, label}
+  updatedAt DateTime @updatedAt
 }

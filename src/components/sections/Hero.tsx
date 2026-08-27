@@ -100,7 +100,7 @@ export default function Hero() {
       />
 
       {/* Architectural glow */}
-      <div className="absolute right-[8%] top-[16%] h-[450px] w-[450px] rounded-full bg-[#b99052]/10 blur-[130px]" />
+      <div className="absolute right-[8%] top-[16%] h-[450px] w-[450px] rounded-full bg-[#b99052]/10 blur-[130px] max-md:h-[250px] max-md:w-[250px] max-md:blur-[80px]" />
 
       {/* Content */}
       <div
@@ -112,7 +112,7 @@ export default function Hero() {
             {siteConfig.hero.eyebrow}
           </p>
 
-          <h1 className="max-w-[700px] font-display text-[clamp(4rem,7.2vw,7.6rem)] font-medium leading-[0.78] tracking-[-0.045em] text-[#f3ede3]">
+          <h1 className="max-w-[700px] font-display text-[clamp(2.8rem,7.2vw,7.6rem)] font-medium leading-[0.82] tracking-[-0.045em] text-[#f3ede3] md:leading-[0.78]">
             {siteConfig.hero.title}
             <br />
 
@@ -121,11 +121,11 @@ export default function Hero() {
             </em>
           </h1>
 
-          <p className="mt-9 max-w-[450px] text-sm leading-7 text-white/55">
+          <p className="mt-7 max-w-[450px] text-sm leading-7 text-white/55 md:mt-9">
             {siteConfig.hero.description}
           </p>
 
-          <div className="mt-9 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3 md:mt-9">
             <Link href={siteConfig.hero.primaryCta.href} className="luxury-button">
               {siteConfig.hero.primaryCta.label}
               <ArrowRight size={15} />
@@ -140,14 +140,14 @@ export default function Hero() {
           </div>
 
           {/* Stats */}
-          <div className="mt-14 flex gap-8 border-t border-white/10 pt-7">
+          <div className="mt-10 flex gap-6 border-t border-white/10 pt-6 md:mt-14 md:gap-8 md:pt-7">
             {siteConfig.stats.map((stat) => (
               <div key={stat.label}>
-                <div className="font-display text-2xl text-[#e5c994]">
+                <div className="font-display text-xl text-[#e5c994] md:text-2xl">
                   {stat.value}
                 </div>
 
-                <div className="mt-1 text-[9px] uppercase tracking-[0.14em] text-white/40">
+                <div className="mt-1 text-[8px] uppercase tracking-[0.14em] text-white/40 md:text-[9px]">
                   {stat.label}
                 </div>
               </div>
@@ -157,14 +157,14 @@ export default function Hero() {
       </div>
 
       {/* Product Stage */}
-      <div className="pointer-events-none absolute right-0 bottom-[5%] top-auto z-10 h-[45%] w-full md:bottom-auto md:right-[-4%] md:top-[12%] md:h-[80%] md:w-[58%] lg:right-[0%] lg:w-[58%]">
+      <div className="pointer-events-none absolute right-0 bottom-[5%] top-auto z-10 h-[40%] w-full md:bottom-auto md:right-[-4%] md:top-[12%] md:h-[80%] md:w-[58%] lg:right-[0%] lg:w-[58%]">
         {/* Back glow */}
         <div className="absolute left-1/2 top-1/2 h-[58%] w-[45%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c7a56e]/10 blur-[90px]" />
 
         {/* Rotating wooden platform */}
         <div
           ref={platformRef}
-          className="absolute left-1/2 top-[74%] h-[90px] w-[72%] -translate-x-1/2 -translate-y-1/2"
+          className="absolute left-1/2 top-[74%] h-[70px] w-[72%] -translate-x-1/2 -translate-y-1/2 md:h-[90px]"
           style={{ perspective: "1000px" }}
         >
           <div ref={platformRotationRef} className="absolute inset-0 h-full w-full">
@@ -181,7 +181,7 @@ export default function Hero() {
         {/* Mannequin / Suit */}
         <div
           ref={mannequinRef}
-          className="absolute left-1/2 top-[46%] h-[70%] w-[54%] -translate-x-1/2 -translate-y-1/2"
+          className="absolute left-1/2 top-[46%] h-[70%] w-[54%] -translate-x-1/2 -translate-y-1/2 md:h-[70%]"
           style={{
             transformStyle: "preserve-3d",
             perspective: "1200px",

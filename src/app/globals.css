@@ -117,7 +117,7 @@ a {
 
 @media (max-width: 768px) {
   .luxury-button {
-    height: 40px;
+    height: 44px;
     padding: 0 16px;
     font-size: 10px;
     gap: 8px;
@@ -130,9 +130,33 @@ a {
   box-shadow: 0 12px 30px rgba(201, 166, 107, 0.14);
 }
 
+.luxury-button:active {
+  transform: translateY(0);
+}
+
 .luxury-button-outline {
   color: #eee4d4;
   background: transparent;
+}
+
+.luxury-button-outline:hover {
+  background: rgba(201, 166, 107, 0.1);
+}
+
+/* -------------------------
+   Mobile form inputs
+------------------------- */
+
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 16px !important;
+    padding: 14px 16px !important;
+  }
 }
 
 /* -------------------------
@@ -146,6 +170,17 @@ a {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
+}
+
+/* -------------------------
+   Touch-friendly minimums
+------------------------- */
+
+@media (max-width: 1024px) {
+  a,
+  button {
+    min-height: 44px;
+  }
 }
 
 /* -------------------------

@@ -7,16 +7,16 @@ import { siteConfig } from "@/config/data";
 
 export default function LookbookPreview() {
   return (
-    <section className="overflow-hidden bg-[#0b0f0c] px-6 py-24 lg:px-12 lg:py-32">
+    <section className="overflow-hidden bg-[#0b0f0c] px-6 py-16 lg:px-12 lg:py-32">
       <div className="mx-auto max-w-[1450px]">
-        <div className="grid items-end gap-12 lg:grid-cols-[320px_1fr]">
+        <div className="grid items-end gap-10 lg:grid-cols-[320px_1fr] lg:gap-12">
           {/* Intro */}
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-[#c9a66b]">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.35em] text-[#c9a66b] lg:text-[10px]">
               LOOKBOOK
             </p>
 
-            <h2 className="mt-5 font-display text-5xl leading-[0.88] text-white lg:text-6xl">
+            <h2 className="mt-4 font-display text-4xl leading-[0.88] text-white lg:mt-5 lg:text-5xl xl:text-6xl">
               Timeless
               <br />
               Elegance
@@ -24,14 +24,14 @@ export default function LookbookPreview() {
               <em className="text-[#c9a66b]">In Every Detail</em>
             </h2>
 
-            <p className="mt-6 text-sm leading-7 text-white/45">
+            <p className="mt-5 text-sm leading-7 text-white/45 lg:mt-6">
               Explore how our designs bring beauty, tradition and style
               together.
             </p>
 
             <Link
               href="/lookbook"
-              className="luxury-button luxury-button-outline mt-7"
+              className="luxury-button luxury-button-outline mt-6 lg:mt-7"
             >
               Explore Lookbook
               <ArrowRight size={14} />
@@ -47,10 +47,10 @@ export default function LookbookPreview() {
                 className={`group relative overflow-hidden rounded-[5px] ${index === 0
                     ? "aspect-[3/4]"
                     : index === 1
-                      ? "mt-10 aspect-[3/4]"
+                      ? "mt-0 aspect-[3/4] sm:mt-10"
                       : index === 2
                         ? "aspect-[3/4]"
-                        : "mt-10 aspect-[3/4]"
+                        : "mt-0 aspect-[3/4] sm:mt-10"
                   }`}
               >
                 <Image
@@ -58,7 +58,7 @@ export default function LookbookPreview() {
                   alt={item.alt}
                   fill
                   className="object-cover transition duration-1000 group-hover:scale-105"
-                  sizes="25vw"
+                  sizes="(max-width: 640px) 50vw, 25vw"
                 />
 
                 <div className="absolute inset-0 bg-black/10 transition group-hover:bg-black/0" />
@@ -67,7 +67,7 @@ export default function LookbookPreview() {
           </div>
         </div>
 
-        <div className="mt-14 h-px w-full bg-white/10" />
+        <div className="mt-10 h-px w-full bg-white/10 lg:mt-14" />
       </div>
     </section>
   );
