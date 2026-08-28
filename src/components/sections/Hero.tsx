@@ -6,11 +6,24 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight, ChevronDown } from "lucide-react";
-import { siteConfig } from "@/config/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero() {
+interface HeroProps {
+  hero: {
+    eyebrow: string;
+    title: string;
+    accentTitle: string;
+    description: string;
+    primaryCta: { label: string; href: string };
+    secondaryCta: { label: string; href: string };
+    heroImage: string;
+    backImage?: string | null;
+  } | null;
+  stats: Array<{ value: string; label: string }>;
+}
+
+export default function Hero({ hero, stats }: HeroProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const platformRef = useRef<HTMLDivElement>(null);
@@ -88,6 +101,23 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
+  const h = hero || {
+    eyebrow: "WHOLESALE FASHION",
+    title: "Wholesale Fashion,",
+    accentTitle: "Made to Move.",
+    description: "Premium quality ladies suits at wholesale prices. Trusted by businesses. Loved by thousands.",
+    primaryCta: { label: "Explore Collections", href: "/collections" },
+    secondaryCta: { label: "Become a Partner", href: "/wholesale" },
+    heroImage: "/images/hero/hero-suit.png",
+    backImage: null,
+  };
+
+  const s = stats.length > 0 ? stats : [
+    { value: "1000+", label: "Happy Retailers" },
+    { value: "500+", label: "Unique Designs" },
+    { value: "24/7", label: "Wholesale Support" },
+  ];
+
   return (
     <section
       ref={sectionRef}
@@ -109,39 +139,39 @@ export default function Hero() {
       >
         <div className="w-full md:w-[60%] lg:w-[53%]">
           <p className="mb-6 text-[10px] font-semibold uppercase tracking-[0.38em] text-[#c9a66b]">
-            {siteConfig.hero.eyebrow}
+            {h.eyebrow}
           </p>
 
           <h1 className="max-w-[700px] font-display text-[clamp(2.8rem,7.2vw,7.6rem)] font-medium leading-[0.82] tracking-[-0.045em] text-[#f3ede3] md:leading-[0.78]">
-            {siteConfig.hero.title}
+            {h.title}
             <br />
 
             <em className="text-[#c9a66b]">
-              {siteConfig.hero.accentTitle}
+              {h.accentTitle}
             </em>
           </h1>
 
           <p className="mt-7 max-w-[450px] text-sm leading-7 text-white/55 md:mt-9">
-            {siteConfig.hero.description}
+            {h.description}
           </p>
 
           <div className="mt-7 flex flex-wrap gap-3 md:mt-9">
-            <Link href={siteConfig.hero.primaryCta.href} className="luxury-button">
-              {siteConfig.hero.primaryCta.label}
+            <Link href={h.primaryCta.href} className="luxury-button">
+              {h.primaryCta.label}
               <ArrowRight size={15} />
             </Link>
 
             <Link
-              href={siteConfig.hero.secondaryCta.href}
+              href={h.secondaryCta.href}
               className="luxury-button luxury-button-outline"
             >
-              {siteConfig.hero.secondaryCta.label}
+              {h.secondaryCta.label}
             </Link>
           </div>
 
           {/* Stats */}
           <div className="mt-10 flex gap-6 border-t border-white/10 pt-6 md:mt-14 md:gap-8 md:pt-7">
-            {siteConfig.stats.map((stat) => (
+            {s.map((stat) => (
               <div key={stat.label}>
                 <div className="font-display text-xl text-[#e5c994] md:text-2xl">
                   {stat.value}
@@ -154,10 +184,76 @@ export default function Hero() {
             ))}
           </div>
         </div>
+
+        {/* Mobile Product Stage - appears after content on mobile, hidden on desktop */}
+        <div className="md:hidden relative h-[50vh] w-full mt-10">
+          {/* Back glow */}
+          <div className="absolute left-1/2 top-1/2 h-[58%] w-[45%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c7a56e]/10 blur-[90px]" />
+
+          {/* Rotating wooden platform */}
+          <div
+            ref={platformRef}
+            className="absolute left-1/2 bottom-[10%] h-[70px] w-[80%] -translate-x-1/2 -translate-y-1/2"
+            style={{ perspective: "1000px" }}
+          >
+            <div ref={platformRotationRef} className="absolute inset-0 h-full w-full">
+              <div
+                className="absolute inset-0 rounded-[50%] border border-[#d6b477]/40 bg-[radial-gradient(ellipse_at_center,#65513a_0%,#33281c_55%,#17130e_100%)] shadow-[0_25px_80px_rgba(0,0,0,.65)]"
+              />
+    
+              <div className="absolute left-1/2 top-1/2 h-[15px] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-[50%] bg-[#d9b46f]/60 blur-[3px]" />
+    
+              <div className="absolute -bottom-1 left-1/2 h-5 w-[68%] -translate-x-1/2 rounded-[50%] bg-[#d8b26c]/20 blur-[8px]" />
+            </div>
+          </div>
+
+          {/* Mannequin / Suit */}
+          <div
+            ref={mannequinRef}
+            className="absolute left-1/2 top-[20%] h-[70%] w-[60%] -translate-x-1/2 -translate-y-1/2"
+            style={{
+              transformStyle: "preserve-3d",
+              perspective: "1200px",
+            }}
+          >
+            <div ref={mannequinRotationRef} className="absolute inset-0 h-full w-full" style={{ transformStyle: "preserve-3d" }}>
+              {/* Dummy / Mannequin Image */}
+              <div className="absolute left-1/2 top-0 h-[100%] w-[100%] -translate-x-1/2">
+                <Image 
+                  src={h.heroImage}
+                  alt="Luxury Suit"
+                  fill
+                  className="object-contain object-bottom drop-shadow-2xl"
+                  style={{ WebkitMaskImage: 'linear-gradient(to bottom, black 90%, transparent 100%)' }}
+                  priority
+                  unoptimized
+                />
+              </div>
+              
+              {/* Future back image support */}
+              {h.backImage && (
+                <div
+                  className="absolute left-1/2 top-[3%] h-[96%] w-[90%] -translate-x-1/2"
+                  style={{
+                    transform: "rotateY(180deg)",
+                    backfaceVisibility: "hidden",
+                  }}
+                >
+                  <Image
+                    src={h.backImage}
+                    alt="Featured wholesale suit back"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Product Stage */}
-      <div className="pointer-events-none absolute right-0 bottom-[5%] top-auto z-10 h-[40%] w-full md:bottom-auto md:right-[-4%] md:top-[12%] md:h-[80%] md:w-[58%] lg:right-[0%] lg:w-[58%]">
+      {/* Desktop Product Stage - hidden on mobile, visible on desktop */}
+      <div className="pointer-events-none hidden md:block absolute right-0 bottom-[5%] top-auto z-10 h-[40%] w-full md:bottom-auto md:right-[-4%] md:top-[12%] md:h-[80%] md:w-[58%] lg:right-[0%] lg:w-[58%]">
         {/* Back glow */}
         <div className="absolute left-1/2 top-1/2 h-[58%] w-[45%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#c7a56e]/10 blur-[90px]" />
 
@@ -191,7 +287,7 @@ export default function Hero() {
             {/* Dummy / Mannequin Image */}
             <div className="absolute left-1/2 top-0 h-[100%] w-[100%] -translate-x-1/2">
               <Image 
-                src="/images/hero/hero-suit.png"
+                src={h.heroImage}
                 alt="Luxury Suit"
                 fill
                 className="object-contain object-bottom drop-shadow-2xl"
@@ -202,7 +298,7 @@ export default function Hero() {
             </div>
             
             {/* Future back image support */}
-            {siteConfig.hero.backImage && (
+            {h.backImage && (
               <div
                 className="absolute left-1/2 top-[3%] h-[96%] w-[90%] -translate-x-1/2"
                 style={{
@@ -211,7 +307,7 @@ export default function Hero() {
                 }}
               >
                 <Image
-                  src={siteConfig.hero.backImage}
+                  src={h.backImage}
                   alt="Featured wholesale suit back"
                   fill
                   className="object-contain"

@@ -123,7 +123,7 @@ export default function Navbar() {
           />
 
           {/* Menu Panel */}
-          <div className="absolute inset-y-0 right-0 w-full bg-[#0a0d0b]/98 backdrop-blur-xl animate-in slide-in-from-right duration-500">
+          <div className="absolute inset-y-0 right-0 w-full bg-[#0a0d0b] animate-in slide-in-from-right duration-500">
             {/* Close button */}
             <div className="flex justify-end px-6 pt-5">
               <button

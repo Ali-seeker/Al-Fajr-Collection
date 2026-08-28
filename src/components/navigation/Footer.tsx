@@ -1,8 +1,50 @@
+"use client";
+
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import { useState } from "react";
+import { MessageCircle, AlertCircle, CheckCircle } from "lucide-react";
 import { siteConfig } from "@/config/data";
 
 export default function Footer() {
+  const [mobile, setMobile] = useState("");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [message, setMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("loading");
+    setMessage("");
+
+    if (!/^\d{11}$/.test(mobile)) {
+      setStatus("error");
+      setMessage("Please enter a valid 11-digit mobile number");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile, source: "footer" }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus("error");
+        setMessage(data.error || "Failed to subscribe");
+        return;
+      }
+
+      setStatus("success");
+      setMessage(data.message || "Subscribed successfully!");
+      setMobile("");
+    } catch {
+      setStatus("error");
+      setMessage("Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <footer className="bg-[#080a08] px-6 pt-14 text-white lg:px-12">
       <div className="mx-auto max-w-[1400px]">
@@ -56,7 +98,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Newsletter */}
+          {/* Newsletter - Mobile Number */}
           <div>
             <h3 className="text-[9px] uppercase tracking-[0.25em] text-[#c9a66b] lg:text-[10px]">
               Stay Connected
@@ -66,17 +108,41 @@ export default function Footer() {
               Subscribe for new collections and wholesale updates.
             </p>
 
-            <div className="mt-4 flex border-b border-white/15 pb-3 lg:mt-6">
+            <form onSubmit={handleSubmit} className="mt-4 flex border-b border-white/15 pb-3 lg:mt-6">
               <input
-                type="email"
-                placeholder="Your email"
+                type="tel"
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                placeholder="11-digit mobile number"
+                maxLength={11}
                 className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-white/25"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                required
+                disabled={status === "loading"}
               />
 
-              <button className="text-[10px] uppercase tracking-wider text-[#d2b274]">
-                Subscribe
+              <button
+                type="submit"
+                className="text-[10px] uppercase tracking-wider text-[#d2b274] disabled:opacity-50"
+                disabled={status === "loading"}
+              >
+                {status === "loading" ? "Subscribing..." : "Subscribe"}
               </button>
-            </div>
+            </form>
+
+            {status === "error" && (
+              <p className="mt-2 text-xs text-red-400 flex items-center gap-1">
+                <AlertCircle size={12} />
+                {message}
+              </p>
+            )}
+            {status === "success" && (
+              <p className="mt-2 text-xs text-green-400 flex items-center gap-1">
+                <CheckCircle size={12} />
+                {message}
+              </p>
+            )}
 
             <div className="mt-5 flex gap-3 lg:mt-6">
               <a

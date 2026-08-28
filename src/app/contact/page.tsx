@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { ArrowRight, MessageCircle, Mail, MapPin, Clock, Phone } from "lucide-react";
+import { ArrowRight, MessageCircle, Mail, MapPin, Clock, Phone, AlertCircle, CheckCircle } from "lucide-react";
 import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/navigation/Footer";
 
@@ -47,11 +47,42 @@ export default function ContactPage() {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 5000);
-    setFormData({ name: "", business: "", email: "", phone: "", city: "", message: "" });
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, type: "GENERAL" }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Failed to submit inquiry");
+        return;
+      }
+
+      setSuccess(true);
+      setSubmitted(true);
+      setFormData({ name: "", business: "", email: "", phone: "", city: "", message: "" });
+      setTimeout(() => setSubmitted(false), 5000);
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -218,6 +249,18 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+                {error && (
+                  <div className="flex items-center gap-2 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded p-3">
+                    <AlertCircle size={16} />
+                    <span>{error}</span>
+                  </div>
+                )}
+                {success && (
+                  <div className="flex items-center gap-2 text-sm text-green-400 bg-green-400/10 border border-green-400/20 rounded p-3">
+                    <CheckCircle size={16} />
+                    <span>Message sent successfully!</span>
+                  </div>
+                )}
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   <div>
                     <label className="mb-2 block text-[10px] uppercase tracking-wider text-white/40">
@@ -225,9 +268,10 @@ export default function ContactPage() {
                     </label>
                     <input
                       type="text"
+                      name="name"
                       required
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={handleChange}
                       className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                       placeholder="Full name"
                     />
@@ -239,8 +283,9 @@ export default function ContactPage() {
                     </label>
                     <input
                       type="text"
+                      name="business"
                       value={formData.business}
-                      onChange={(e) => setFormData({ ...formData, business: e.target.value })}
+                      onChange={handleChange}
                       className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                       placeholder="Your business name"
                     />
@@ -254,9 +299,10 @@ export default function ContactPage() {
                     </label>
                     <input
                       type="email"
+                      name="email"
                       required
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={handleChange}
                       className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                       placeholder="your@email.com"
                     />
@@ -268,8 +314,9 @@ export default function ContactPage() {
                     </label>
                     <input
                       type="tel"
+                      name="phone"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={handleChange}
                       className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                       placeholder="+92 300 000 0000"
                     />
@@ -282,8 +329,9 @@ export default function ContactPage() {
                   </label>
                   <input
                     type="text"
+                    name="city"
                     value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    onChange={handleChange}
                     className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                     placeholder="Your city"
                   />

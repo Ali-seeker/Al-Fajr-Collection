@@ -2,13 +2,45 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, AlertCircle } from "lucide-react";
 import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/navigation/Footer";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Login failed");
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="overflow-hidden">
@@ -32,7 +64,14 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="mt-10 space-y-5 lg:mt-12" onSubmit={(e) => e.preventDefault()}>
+          <form className="mt-10 space-y-5 lg:mt-12" onSubmit={handleSubmit}>
+            {error && (
+              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded p-3">
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+
             <div>
               <label className="mb-2 block text-[10px] uppercase tracking-wider text-white/40">
                 Email
@@ -43,6 +82,8 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                 placeholder="your@email.com"
+                required
+                disabled={loading}
               />
             </div>
 
@@ -56,11 +97,13 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                 placeholder="Your password"
+                required
+                disabled={loading}
               />
             </div>
 
-            <button type="submit" className="luxury-button w-full justify-center">
-              Sign In
+            <button type="submit" className="luxury-button w-full justify-center" disabled={loading}>
+              {loading ? "Signing In..." : "Sign In"}
               <ArrowRight size={14} />
             </button>
           </form>

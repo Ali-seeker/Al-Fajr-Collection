@@ -31,5 +31,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "prisma/seed.ts", "prisma/seed.mjs", "seed.js", "seed.mjs", "seed-direct.js", "seed.cjs", "tsconfig.seed.json"]
 }

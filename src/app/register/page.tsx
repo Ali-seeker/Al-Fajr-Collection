@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowRight, AlertCircle } from "lucide-react";
 import Navbar from "@/components/navigation/Navbar";
 import Footer from "@/components/navigation/Footer";
 
@@ -14,6 +15,58 @@ export default function RegisterPage() {
     confirmPassword: "",
     business: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword,
+          business: formData.business,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.error || "Registration failed");
+        return;
+      }
+
+      router.push("/");
+      router.refresh();
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <main className="overflow-hidden">
@@ -37,17 +90,27 @@ export default function RegisterPage() {
             </p>
           </div>
 
-          <form className="mt-10 space-y-5 lg:mt-12" onSubmit={(e) => e.preventDefault()}>
+          <form className="mt-10 space-y-5 lg:mt-12" onSubmit={handleSubmit}>
+            {error && (
+              <div className="flex items-center gap-2 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded p-3">
+                <AlertCircle size={16} />
+                <span>{error}</span>
+              </div>
+            )}
+
             <div>
               <label className="mb-2 block text-[10px] uppercase tracking-wider text-white/40">
                 Full Name
               </label>
               <input
                 type="text"
+                name="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={handleChange}
                 className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                 placeholder="Your full name"
+                required
+                disabled={loading}
               />
             </div>
 
@@ -57,10 +120,12 @@ export default function RegisterPage() {
               </label>
               <input
                 type="text"
+                name="business"
                 value={formData.business}
-                onChange={(e) => setFormData({ ...formData, business: e.target.value })}
+                onChange={handleChange}
                 className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                 placeholder="Your business name"
+                disabled={loading}
               />
             </div>
 
@@ -70,10 +135,13 @@ export default function RegisterPage() {
               </label>
               <input
                 type="email"
+                name="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={handleChange}
                 className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                 placeholder="your@email.com"
+                required
+                disabled={loading}
               />
             </div>
 
@@ -83,10 +151,14 @@ export default function RegisterPage() {
               </label>
               <input
                 type="password"
+                name="password"
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                onChange={handleChange}
                 className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                 placeholder="Create a password"
+                required
+                minLength={8}
+                disabled={loading}
               />
             </div>
 
@@ -96,15 +168,18 @@ export default function RegisterPage() {
               </label>
               <input
                 type="password"
+                name="confirmPassword"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                onChange={handleChange}
                 className="w-full border border-white/15 bg-transparent px-4 py-3 text-sm text-white outline-none transition focus:border-[#c9a66b]/50"
                 placeholder="Confirm your password"
+                required
+                disabled={loading}
               />
             </div>
 
-            <button type="submit" className="luxury-button w-full justify-center">
-              Create Account
+            <button type="submit" className="luxury-button w-full justify-center" disabled={loading}>
+              {loading ? "Creating Account..." : "Create Account"}
               <ArrowRight size={14} />
             </button>
           </form>

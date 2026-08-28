@@ -340,7 +340,7 @@ model ContactInquiry {
 
 model NewsletterSubscriber {
   id        String   @id @default(cuid())
-  email     String   @unique
+  mobile    String   @unique
   name      String?
   isActive  Boolean  @default(true)
   subscribedAt DateTime @default(now())
@@ -349,7 +349,7 @@ model NewsletterSubscriber {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([email])
+  @@index([mobile])
   @@index([isActive])
 }
 

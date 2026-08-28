@@ -4,23 +4,23 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, name, source } = body;
+    const { mobile, name, source } = body;
 
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    if (!mobile) {
+      return NextResponse.json({ error: "Mobile number is required" }, { status: 400 });
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    const mobileRegex = /^\d{11}$/;
+    if (!mobileRegex.test(mobile)) {
+      return NextResponse.json({ error: "Invalid mobile number. Must be 11 digits." }, { status: 400 });
     }
 
-    const existing = await prisma.newsletterSubscriber.findUnique({ where: { email } });
+    const existing = await prisma.newsletterSubscriber.findUnique({ where: { mobile } });
 
     if (existing) {
       if (!existing.isActive) {
         await prisma.newsletterSubscriber.update({
-          where: { email },
+          where: { mobile },
           data: { isActive: true, unsubscribedAt: null, name: name || existing.name },
         });
         return NextResponse.json({ message: "Resubscribed successfully" });
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     const subscriber = await prisma.newsletterSubscriber.create({
-      data: { email, name, source: source || "footer" },
+      data: { mobile, name, source: source || "footer" },
     });
 
     return NextResponse.json(subscriber, { status: 201 });
