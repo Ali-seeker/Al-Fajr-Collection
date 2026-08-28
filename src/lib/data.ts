@@ -1,17 +1,39 @@
 import { prisma } from "./prisma";
 
+// Helper to convert Decimal to number
+function convertDecimal(obj: any): any {
+  if (!obj) return obj;
+  if (Array.isArray(obj)) return obj.map(convertDecimal);
+  if (typeof obj === 'object' && obj !== null) {
+    const result: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value && typeof value === 'object' && 'toNumber' in value) {
+        // Prisma Decimal object
+        result[key] = Number(value);
+      } else if (typeof value === 'object' && value !== null) {
+        result[key] = convertDecimal(value);
+      } else {
+        result[key] = value;
+      }
+    }
+    return result;
+  }
+  return obj;
+}
+
 export async function getCollections(activeOnly = true) {
-  return prisma.collection.findMany({
+  const collections = await prisma.collection.findMany({
     where: activeOnly ? { isActive: true } : {},
     orderBy: { sortOrder: "asc" },
     include: {
       _count: { select: { products: true } },
     },
   });
+  return convertDecimal(collections);
 }
 
 export async function getCollectionBySlug(slug: string, includeProducts = false) {
-  return prisma.collection.findUnique({
+  const collection = await prisma.collection.findUnique({
     where: { slug },
     include: {
       products: includeProducts
@@ -22,6 +44,7 @@ export async function getCollectionBySlug(slug: string, includeProducts = false)
         : false,
     },
   });
+  return convertDecimal(collection);
 }
 
 export async function getProducts(params?: {
@@ -49,24 +72,26 @@ export async function getProducts(params?: {
     prisma.product.count({ where }),
   ]);
 
-  return { products, total };
+  return { products: convertDecimal(products), total };
 }
 
 export async function getProductBySlug(slug: string) {
-  return prisma.product.findUnique({
+  const product = await prisma.product.findUnique({
     where: { slug },
     include: {
       collection: true,
       variants: true,
     },
   });
+  return convertDecimal(product);
 }
 
 export async function getLookbookItems(activeOnly = true) {
-  return prisma.lookbookItem.findMany({
+  const items = await prisma.lookbookItem.findMany({
     where: activeOnly ? { isActive: true } : {},
     orderBy: { sortOrder: "asc" },
   });
+  return convertDecimal(items);
 }
 
 export async function getWholesaleFAQs() {

@@ -79,7 +79,7 @@ export default function NewCollection({ collections }: NewCollectionProps) {
               className="flex gap-4 lg:gap-5 pb-4 overflow-x-auto scrollbar-hide scroll-smooth snap-x"
               style={{ scrollSnapType: "x mandatory" }}
             >
-              {collections.map((collection) => (
+              {collections.map((collection: any) => (
                 <Link
                   key={collection.id}
                   href={`/collections/${collection.slug}`}
