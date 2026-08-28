@@ -36,9 +36,7 @@ export async function GET(request: NextRequest) {
     const [products, total] = await Promise.all([
       prisma.product.findMany({
         where,
-        include: {
-          collection: true,
-        },
+        include: { collection: true },
         orderBy: { sortOrder: "asc" },
         skip: limit > 0 ? skip : 0,
         take: limit > 0 ? limit : undefined,
@@ -59,11 +57,27 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { slug, name, description, price, compareAtPrice, fabric, moq, colors, images, primaryImage, collectionId, isFeatured, sortOrder } = body;
+    const { slug, name, description, price, compareAtPrice, fabric, moq, colors, images, primaryImage, collectionId, collectionSlug, isFeatured, sortOrder } = body;
 
-    if (!slug || !name || !price || !primaryImage || !collectionId) {
+    if (!slug || !name || !price || !primaryImage) {
       return NextResponse.json(
-        { error: "Slug, name, price, primaryImage, and collectionId are required" },
+        { error: "Slug, name, price, and primaryImage are required" },
+        { status: 400 }
+      );
+    }
+
+    let resolvedCollectionId = collectionId;
+    if (!resolvedCollectionId && collectionSlug) {
+      const collection = await prisma.collection.findUnique({ where: { slug: collectionSlug } });
+      if (!collection) {
+        return NextResponse.json({ error: "Collection not found" }, { status: 400 });
+      }
+      resolvedCollectionId = collection.id;
+    }
+
+    if (!resolvedCollectionId) {
+      return NextResponse.json(
+        { error: "Either collectionId or collectionSlug is required" },
         { status: 400 }
       );
     }
@@ -80,7 +94,7 @@ export async function POST(request: NextRequest) {
         colors: colors || [],
         images: images || [],
         primaryImage,
-        collectionId,
+        collectionId: resolvedCollectionId,
         isFeatured: isFeatured || false,
         sortOrder: sortOrder || 0,
       },
